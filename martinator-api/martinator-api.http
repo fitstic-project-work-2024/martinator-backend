@@ -1,6 +1,5 @@
-@martinator_api_HostAddress = http://localhost:5255
+@martinator_api_HostAddress = http://localhost:5000
 
-GET {{martinator_api_HostAddress}}/weatherforecast/
-Accept: application/json
+GET {{martinator_api_HostAddress}}/test/
 
 ###
