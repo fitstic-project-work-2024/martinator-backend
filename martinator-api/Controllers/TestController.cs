@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace martinator_api;
@@ -13,7 +14,7 @@ public class TestController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet(Name = "Test")]
+    [HttpGet(Name = "Test"), Authorize]
     public string Get()
     {
         return "test";

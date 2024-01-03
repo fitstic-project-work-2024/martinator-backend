@@ -483,4 +483,8 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
+# Github folder
 .github
+
+# Sqlite database
+db*
