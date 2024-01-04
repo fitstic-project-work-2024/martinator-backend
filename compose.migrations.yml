@@ -1,11 +1,4 @@
 services:
-  server:
-    build: martinator-api
-    ports:
-      - 8080:8080
-    depends_on:
-      - db
-
   migrations:
     build:
       context: martinator-api

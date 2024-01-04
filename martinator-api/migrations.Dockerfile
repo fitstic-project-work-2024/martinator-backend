@@ -3,7 +3,9 @@ WORKDIR /App
 
 # Copy everything
 COPY . ./
-# Migrations
+# Install migrations tool
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
-CMD dotnet ef database update
+
+# Migrations
+ENTRYPOINT ["dotnet", "ef", "database", "update"]
