@@ -1,0 +1,17 @@
+services:
+  migrations:
+    build:
+      context: martinator-api
+      dockerfile: migrations.Dockerfile
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: test
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

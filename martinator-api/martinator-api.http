@@ -1,5 +1,0 @@
-@martinator_api_HostAddress = http://localhost:5000
-
-GET {{martinator_api_HostAddress}}/test/
-
-###
