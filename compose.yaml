@@ -1,0 +1,19 @@
+services:
+  server:
+    build: martinator-api
+    ports:
+      - 8080:8080
+    restart: always
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: test
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
