@@ -486,8 +486,5 @@ $RECYCLE.BIN/
 # Github folder
 .github
 
-# Sqlite database
-db*
-
 # Folder where recording are saved for testing purposes
 recordings
