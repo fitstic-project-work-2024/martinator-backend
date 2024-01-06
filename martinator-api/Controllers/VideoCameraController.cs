@@ -26,7 +26,7 @@ public class VideoCameraController : ControllerBase
         // It first retrieves the necessary information for the download request,
         // then sends the download request and checks if it was successful.
 
-        // FIX: The download request is not working, it returns a 500 error
+        // FIX: Downloaded videos are corrupted and cannot be played
         // TODO: Add error handling for the requests
         // TODO: Add a way to retrieve the video from the response
         // TODO: Set needed parameters as a query in the URL
@@ -63,14 +63,19 @@ public class VideoCameraController : ControllerBase
             // Retrieving needed values for the get.playback.download request
             string chnid = recordInfoValues["chnid"];
             string sid = recordInfoValues["sid"];
-            string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={startDate}%20{startTime}&endTime={endDate}%20{endTime}";
+            string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=0&startTime={startDate}%20{startTime}&endTime={endDate}%20{endTime}";
 
             // get.playback.recordinfo request
-            var recordDownloadResponse = await client.GetAsync(recordDownloadURL);
+            var recordDownloadResponse = await client.GetAsync(recordDownloadURL, HttpCompletionOption.ResponseHeadersRead);
 
             if (recordDownloadResponse.IsSuccessStatusCode)
             {
-                return Ok("Download works");
+                using (var fileStream = System.IO.File.Create($"./Data/recordings/{sid}.mp4"))
+                {
+                    await recordDownloadResponse.Content.CopyToAsync(fileStream);
+                }
+
+                return Ok("Download successful");
             }
             else
             {

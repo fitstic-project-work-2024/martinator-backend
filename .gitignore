@@ -488,3 +488,6 @@ $RECYCLE.BIN/
 
 # Sqlite database
 db*
+
+# Folder where recording are saved for testing purposes
+recordings
