@@ -63,7 +63,7 @@ public class VideoCameraController : ControllerBase
             // Retrieving needed values for the get.playback.download request
             string chnid = recordInfoValues["chnid"];
             string sid = recordInfoValues["sid"];
-            string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=0&startTime={startDate}%20{startTime}&endTime={endDate}%20{endTime}";
+            string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={startDate}%20{startTime}&endTime={endDate}%20{endTime}";
 
             // get.playback.recordinfo request
             var recordDownloadResponse = await client.GetAsync(recordDownloadURL, HttpCompletionOption.ResponseHeadersRead);
