@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Diagnostics;
+using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,7 @@ public class VideoCameraController : ControllerBase
     private string password = "mutina23";
     private string ip = "93.57.67.110";
     private string startTime = "00:00:01";
-    private string endTime = "00:00:02";
+    private string endTime = "00:00:60";
     private string startDate = "2024-01-04";
     private string endDate = "2024-01-04";
     private HttpClient client = new HttpClient();
@@ -26,9 +27,7 @@ public class VideoCameraController : ControllerBase
         // It first retrieves the necessary information for the download request,
         // then sends the download request and checks if it was successful.
 
-        // FIX: Downloaded videos are corrupted and cannot be played
-        // TODO: Add error handling for the requests
-        // TODO: Add a way to retrieve the video from the response
+        // TODO: Add error handling for the request and the curl command
         // TODO: Set needed parameters as a query in the URL
 
 
@@ -63,31 +62,45 @@ public class VideoCameraController : ControllerBase
             // Retrieving needed values for the get.playback.download request
             string chnid = recordInfoValues["chnid"];
             string sid = recordInfoValues["sid"];
+            string size = recordInfoValues["allSize"];
             string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={startDate}%20{startTime}&endTime={endDate}%20{endTime}";
 
-            // get.playback.recordinfo request
-            var recordDownloadResponse = await client.GetAsync(recordDownloadURL, HttpCompletionOption.ResponseHeadersRead);
-
-            if (recordDownloadResponse.IsSuccessStatusCode)
+            // get.playback.recordinfo request through curl process
+            var startInfo = new ProcessStartInfo
             {
-                using (var fileStream = System.IO.File.Create($"./Data/recordings/{sid}.mp4"))
-                {
-                    await recordDownloadResponse.Content.CopyToAsync(fileStream);
-                }
+                FileName = "curl",
+                Arguments = $"-o ./Data/recordings/NVR-CAM-S{formatDate(startDate)}-{formatTime(startTime)}-E{formatDate(endDate)}-{formatTime(endTime)}.mp4 -u admin:mutina23  {recordDownloadURL}",
+                UseShellExecute = false,
+            };
+            var process = new Process { StartInfo = startInfo };
+            process.Start();
+            await process.WaitForExitAsync();
 
-                return Ok("Download successful");
-            }
-            else
-            {
-                return StatusCode((int)recordDownloadResponse.StatusCode, "Download failed");
-            }
+            return Ok("Video successfully downloaded");
+
+
         }
         else
         {
             return StatusCode((int)recordInfoResponse.StatusCode, recordInfoResponse.ReasonPhrase + "Unable to retrieve record info");
         }
 
+
     }
 
+    public string formatDate(string date)
+    {
+        // This method formats a date from yyyy-mm-dd to yyyymmdd
+        string[] dateParts = date.Split("-");
+        string formattedDate = dateParts[0] + dateParts[1] + dateParts[2];
+        return formattedDate;
+    }
 
+    public string formatTime(string time)
+    {
+        // This method formats a time from hh:mm:ss to hhmmss
+        string[] timeParts = time.Split(":");
+        string formattedTime = timeParts[0] + timeParts[1] + timeParts[2];
+        return formattedTime;
+    }
 }
